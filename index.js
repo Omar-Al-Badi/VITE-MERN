@@ -1,6 +1,40 @@
+require('dotenv').config();
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
+
+// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
+/* const url =
+  `mongodb+srv://fullstack:${password}@cluster0.z2ph5sy.mongodb.net/?retryWrites=true&w=majority` */
+
+mongoose.set('strictQuery',false)
+
+const url = process.env.MONGODB_URI
+console.log('connecting to', url)
+
+mongoose.connect(url)
+.then(result => {    
+  console.log('connected to MongoDB')  
+})  
+.catch((error) => {    
+  console.log('error connecting to MongoDB:', error.message)  
+})
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+})
+
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -17,7 +51,7 @@ const unknownEndpoint = (request, response) => {
 app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
-app.use(express.static('build'))
+app.use(express.static('dist'))
 
 let notes = [
   {
@@ -42,8 +76,10 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/notes', (req, res) => {
-  res.json(notes)
+app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 const generateId = () => {
