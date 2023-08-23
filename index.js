@@ -130,11 +130,35 @@ app.get('/api/notes/:id', (request, response) => {
 })
 
 app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
-
-  response.status(204).end()
+  Note.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => {
+      // Handle the error here, for example, send an error response
+      response.status(500).json({ error: 'An error occurred' })
+    })
 })
+
+app.put('/api/notes/:id', (request, response) => {
+  const body = request.body
+
+  const note = {
+    content: body.content,
+    important: body.important,
+  }
+
+  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => {
+      // Handle the error here, for example, send an error response
+      response.status(500).json({ error: 'An error occurred' })
+    })
+})
+
+
 
 app.use(unknownEndpoint)
 
