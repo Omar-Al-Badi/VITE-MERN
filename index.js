@@ -3,38 +3,13 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const Note = require('./models/note')
 
 // DO NOT SAVE YOUR PASSWORD TO GITHUB!!
 /* const url =
   `mongodb+srv://fullstack:${password}@cluster0.z2ph5sy.mongodb.net/?retryWrites=true&w=majority` */
 
 mongoose.set('strictQuery',false)
-
-const url = process.env.MONGODB_URI
-console.log('connecting to', url)
-
-mongoose.connect(url)
-.then(result => {    
-  console.log('connected to MongoDB')  
-})  
-.catch((error) => {    
-  console.log('error connecting to MongoDB:', error.message)  
-})
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-})
-
-noteSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -132,7 +107,7 @@ app.delete('/api/notes/:id', (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
