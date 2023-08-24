@@ -3,6 +3,7 @@ import Note from './components/Note'
 import Notification from './components/Notification'
 import Footer from './components/Footer'
 import noteService from './services/notes'
+import { Form, Button } from 'react-bootstrap'
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -61,13 +62,13 @@ const App = () => {
     : notes.filter(note => note.important)
 
   return (
-    <div>
+    <div className="container">
       <h1>Notes</h1>
       <Notification message={errorMessage} />
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
+        <Button variant="secondary" type="submit" onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all' }
-        </button>
+        </Button>
       </div>      
       <ul>
         {notesToShow.map(note => 
@@ -83,7 +84,9 @@ const App = () => {
           value={newNote}
           onChange={handleNoteChange}
         />
-        <button type="submit">save</button>
+        <Button variant="primary" type="submit">
+          save
+        </Button>
       </form>
       <Footer />
     </div>

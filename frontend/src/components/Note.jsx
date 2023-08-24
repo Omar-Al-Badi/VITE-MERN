@@ -1,3 +1,4 @@
+import { Form, Button } from 'react-bootstrap'
 const Note = ({ note, toggleImportance }) => {
   const label = note.important
     ? 'make not important' : 'make important'
@@ -5,7 +6,8 @@ const Note = ({ note, toggleImportance }) => {
   return (
     <li className='note'>
       {note.content} 
-      <button onClick={toggleImportance}>{label}</button>
+      <Button variant="secondary" type="submit"  onClick={toggleImportance}>{label}
+      </Button>
     </li>
   )
 }
